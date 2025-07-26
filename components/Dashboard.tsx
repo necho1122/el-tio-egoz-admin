@@ -1,0 +1,227 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import 'keen-slider/keen-slider.min.css';
+import { useKeenSlider } from 'keen-slider/react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+type Item = {
+	id: string;
+	title: string;
+	description: string;
+	images: string[];
+	createdAt: number;
+	likes: number;
+};
+
+export default function ItemsList() {
+	const [data, setData] = useState<Item[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [editModalOpen, setEditModalOpen] = useState(false);
+	const [currentGame, setCurrentGame] = useState<Item | null>(null);
+	const [formTitle, setFormTitle] = useState('');
+	const [formDescription, setFormDescription] = useState('');
+	const [formImages, setFormImages] = useState<string>('');
+
+	useEffect(() => {
+		async function fetchItems() {
+			try {
+				const res = await fetch('/api/game/get');
+				const items = await res.json();
+				setData(items);
+			} catch (err) {
+				console.error('Error al obtener los items:', err);
+			} finally {
+				setLoading(false);
+			}
+		}
+		fetchItems();
+	}, []);
+
+	const deleteItem = async (id: string) => {
+		const res = await fetch('/api/game/delete', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id }),
+		});
+		setData((prev) => prev.filter((game) => game.id !== id));
+	};
+
+	const openEditModal = (item: Item) => {
+		setCurrentGame(item);
+		setFormTitle(item.title);
+		setFormDescription(item.description);
+		setFormImages(item.images.join('\n'));
+		setEditModalOpen(true);
+	};
+
+	const handleUpdate = async (e: React.FormEvent) => {
+		e.preventDefault();
+
+		if (!currentGame) return;
+
+		const updatedData = {
+			title: formTitle,
+			description: formDescription,
+			images: formImages
+				.split('\n')
+				.map((url) => url.trim())
+				.filter((url) => url.length > 0),
+		};
+
+		const res = await fetch('/api/game/update', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				id: currentGame.id,
+				data: updatedData,
+			}),
+		});
+
+		if (res.ok) {
+			setData((prev) =>
+				prev.map((item) =>
+					item.id === currentGame.id ? { ...item, ...updatedData } : item
+				)
+			);
+			setEditModalOpen(false);
+			setCurrentGame(null);
+		}
+	};
+
+	if (loading) return <p className='mx-auto text-center'>Cargando...</p>;
+
+	return (
+		<div className='max-w-7xl grid sm:grid-cols-2 md:grid-cols-3 gap-8 mx-auto px-4 py-8'>
+			<Link
+				href='/addGame'
+				className='flex flex-col items-center justify-center fixed bottom-4 right-4 hover:bg-card-bg p-2 rounded-md z-50'
+			>
+				<span className='text-heading text-3xl'>+</span>
+				<span className='text-heading text-xs'>Agregar Juego</span>
+			</Link>
+
+			{data.map((item) => (
+				<div
+					key={item.id}
+					className='mb-10 pb-6 bg-card-bg rounded-lg flex flex-col justify-between shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105'
+				>
+					<h2 className='text-xl text-heading font-semibold p-4'>
+						{item.title}
+					</h2>
+					<ImageSlider images={item.images} />
+					<p className='text-text-secondary p-2'>{item.description}</p>
+					<p className='text-sm text-gray-500 pl-2'>Likes: {item.likes}</p>
+					<p className='text-sm text-gray-500 p-2'>
+						Fecha: {new Date(item.createdAt).toLocaleDateString()}
+					</p>
+					<div className='flex justify-between px-8 md:px-4 gap-2'>
+						<button
+							className='bg-btn hover:bg-btn-hover hover:cursor-pointer px-4 py-1 rounded-sm flex gap-2 items-center justify-center'
+							onClick={() => openEditModal(item)}
+						>
+							<Image
+								src='/icons/edit.svg'
+								alt='Editar'
+								width={16}
+								height={16}
+							/>
+							Editar
+						</button>
+						<button
+							className='bg-red-500 hover:bg-red-400 hover:cursor-pointer px-2 py-1 rounded-sm flex gap-2 items-center justify-center'
+							onClick={() => deleteItem(item.id)}
+						>
+							<Image
+								src='/icons/bin.svg'
+								alt='Eliminar'
+								width={16}
+								height={16}
+							/>
+							Eliminar
+						</button>
+					</div>
+				</div>
+			))}
+
+			{editModalOpen && currentGame && (
+				<div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50'>
+					<div className='bg-card-bg p-6 rounded-md w-full max-w-xl relative shadow-lg'>
+						<button
+							className='absolute top-2 right-2 text-black font-bold hover:cursor-pointer hover:scale-105'
+							onClick={() => setEditModalOpen(false)}
+						>
+							X
+						</button>
+						<h2 className='text-lg font-semibold mb-4'>Editar juego</h2>
+						<form
+							onSubmit={handleUpdate}
+							className='flex flex-col gap-4'
+						>
+							<input
+								type='text'
+								value={formTitle}
+								onChange={(e) => setFormTitle(e.target.value)}
+								className='border p-2 rounded'
+								required
+							/>
+							<input
+								type='text'
+								value={formDescription}
+								onChange={(e) => setFormDescription(e.target.value)}
+								className='border p-2 rounded'
+								required
+							/>
+							<textarea
+								value={formImages}
+								onChange={(e) => setFormImages(e.target.value)}
+								className='border p-2 rounded'
+								rows={5}
+								required
+							/>
+							<button
+								type='submit'
+								className='bg-btn text-white py-2 px-4 rounded hover:bg-btn-hover hover:cursor-pointer'
+							>
+								Guardar cambios
+							</button>
+						</form>
+					</div>
+				</div>
+			)}
+		</div>
+	);
+}
+
+function ImageSlider({ images }: { images: string[] }) {
+	const [sliderRef] = useKeenSlider<HTMLDivElement>({
+		loop: true,
+		mode: 'snap',
+		slides: {
+			perView: 1,
+			spacing: 10,
+		},
+	});
+
+	return (
+		<div
+			ref={sliderRef}
+			className='keen-slider rounded overflow-hidden'
+		>
+			{images.map((url, idx) => (
+				<div
+					className='keen-slider__slide'
+					key={idx}
+				>
+					{/* eslint-disable-next-line @next/next/no-img-element */}
+					<img
+						src={url}
+						alt={`Imagen ${idx + 1}`}
+						className='w-full h-64 object-cover'
+					/>
+				</div>
+			))}
+		</div>
+	);
+}
