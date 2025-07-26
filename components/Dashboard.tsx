@@ -5,6 +5,8 @@ import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 type Item = {
 	id: string;
@@ -13,6 +15,10 @@ type Item = {
 	images: string[];
 	createdAt: number;
 	likes: number;
+	basicInfomation?: string[];
+	details?: string[];
+	platforms?: string[];
+	downloadLink?: string[];
 };
 
 export default function ItemsList() {
@@ -56,7 +62,11 @@ export default function ItemsList() {
 		setCurrentGame(item);
 		setFormTitle(item.title);
 		setFormDescription(item.description);
-		setFormImages(item.images.join('\n'));
+		setFormImages(item.images?.join('\n') || '');
+		setBasicInfomation(item.basicInfomation?.join('\n') || '');
+		setDetails(item.details?.join('\n') || '');
+		setPlatforms(item.platforms?.join('\n') || '');
+		setDownloadLink(item.downloadLink?.join('\n') || '');
 		setEditModalOpen(true);
 	};
 
@@ -72,6 +82,22 @@ export default function ItemsList() {
 				.split('\n')
 				.map((url) => url.trim())
 				.filter((url) => url.length > 0),
+			basicInfomation: basicInfomation
+				.split('\n')
+				.map((x) => x.trim())
+				.filter((x) => x),
+			details: details
+				.split('\n')
+				.map((x) => x.trim())
+				.filter((x) => x),
+			platforms: platforms
+				.split('\n')
+				.map((x) => x.trim())
+				.filter((x) => x),
+			downloadLink: downloadLink
+				.split('\n')
+				.map((x) => x.trim())
+				.filter((x) => x),
 		};
 
 		const res = await fetch('/api/game/update', {
@@ -98,6 +124,18 @@ export default function ItemsList() {
 
 	return (
 		<div className='max-w-7xl grid sm:grid-cols-2 md:grid-cols-3 gap-8 mx-auto px-4 py-8'>
+			<button
+				onClick={() => signOut(auth)}
+				className='absolute top-4 right-4 flex items-center gap-2 bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-md mb-4'
+			>
+				<Image
+					src='/icons/exit.png'
+					alt='Cerrar sesión'
+					width={16}
+					height={16}
+				/>
+				Cerrar sesión
+			</button>
 			<Link
 				href='/addGame'
 				className='flex flex-col items-center justify-center fixed bottom-4 right-4 hover:bg-card-bg p-2 rounded-md z-50'
@@ -115,8 +153,10 @@ export default function ItemsList() {
 						{item.title}
 					</h2>
 					<ImageSlider images={item.images} />
-					<p className='text-text-secondary p-2'>{item.description}</p>
-					<p className='text-sm text-gray-500 pl-2'>Likes: {item.likes}</p>
+					<p className='text-text-secondary px-2 line-clamp-3'>
+						{item.description}
+					</p>
+					<p className='text-sm text-gray-500 px-2 pt-1'>Likes: {item.likes}</p>
 					<p className='text-sm text-gray-500 p-2'>
 						Fecha: {new Date(item.createdAt).toLocaleDateString()}
 					</p>
