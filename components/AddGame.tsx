@@ -15,6 +15,7 @@ function AddGame() {
 	const [downloadLink, setDownloadLink] = useState<string[]>([]);
 	const [status, setStatus] = useState('');
 	const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+	// Resetea el estado de éxito y mensaje después de 3 segundos
 
 	useEffect(() => {
 		if (status) {

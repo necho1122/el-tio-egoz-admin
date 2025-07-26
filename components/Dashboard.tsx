@@ -23,6 +23,10 @@ export default function ItemsList() {
 	const [formTitle, setFormTitle] = useState('');
 	const [formDescription, setFormDescription] = useState('');
 	const [formImages, setFormImages] = useState<string>('');
+	const [basicInfomation, setBasicInfomation] = useState<string>('');
+	const [details, setDetails] = useState<string>('');
+	const [platforms, setPlatforms] = useState<string>('');
+	const [downloadLink, setDownloadLink] = useState<string>('');
 
 	useEffect(() => {
 		async function fetchItems() {
@@ -178,6 +182,38 @@ export default function ItemsList() {
 								onChange={(e) => setFormImages(e.target.value)}
 								className='border p-2 rounded'
 								rows={5}
+								required
+							/>
+							<textarea
+								placeholder='Información básica del juego (una por línea)'
+								value={basicInfomation}
+								onChange={(e) => setBasicInfomation(e.target.value)}
+								className='border p-2 rounded'
+								rows={3}
+								required
+							/>
+							<textarea
+								placeholder='Detalles del juego (una por línea)'
+								value={details}
+								onChange={(e) => setDetails(e.target.value)}
+								className='border p-2 rounded'
+								rows={3}
+								required
+							/>
+							<textarea
+								placeholder='Plataformas (una por línea)'
+								value={platforms}
+								onChange={(e) => setPlatforms(e.target.value)}
+								className='border p-2 rounded'
+								rows={3}
+								required
+							/>
+							<textarea
+								placeholder='Enlaces de descarga (una por línea)'
+								value={downloadLink}
+								onChange={(e) => setDownloadLink(e.target.value)}
+								className='border p-2 rounded'
+								rows={3}
 								required
 							/>
 							<button
