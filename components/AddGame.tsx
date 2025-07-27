@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import clsx from 'clsx';
+import { auth } from '@/lib/firebase';
 
 function AddGame() {
 	const [title, setTitle] = useState('');
@@ -15,7 +16,6 @@ function AddGame() {
 	const [downloadLink, setDownloadLink] = useState<string[]>([]);
 	const [status, setStatus] = useState('');
 	const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
-	// Resetea el estado de éxito y mensaje después de 3 segundos
 
 	useEffect(() => {
 		if (status) {
@@ -31,23 +31,34 @@ function AddGame() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		const newGame = {
-			title,
-			description,
-			images,
-			basicInfomation,
-			details,
-			platforms,
-			downloadLink,
-			date: new Date().toISOString(),
-			likes: 0,
-		};
+		const user = auth.currentUser;
+
+		if (!user) {
+			setStatus('Debes iniciar sesión para agregar un juego');
+			setIsSuccess(false);
+			return;
+		}
 
 		try {
+			const idToken = await user.getIdToken();
+
+			const newGame = {
+				title,
+				description,
+				images,
+				basicInfomation,
+				details,
+				platforms,
+				downloadLink,
+				date: new Date().toISOString(),
+				likes: 0,
+			};
+
 			const response = await fetch('/api/game/add', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
+					Authorization: `Bearer ${idToken}`,
 				},
 				body: JSON.stringify(newGame),
 			});
@@ -65,7 +76,8 @@ function AddGame() {
 				setPlatforms([]);
 				setDownloadLink([]);
 			} else {
-				setStatus('Error al agregar el juego');
+				const errorText = await response.text();
+				setStatus(`Error al agregar el juego: ${errorText}`);
 				setIsSuccess(false);
 			}
 		} catch (error) {
@@ -77,7 +89,6 @@ function AddGame() {
 
 	return (
 		<div className='p-4 bg-card-bg rounded shadow-md mx-auto max-w-7xl relative'>
-			{/* Botón Home */}
 			<Link
 				href='/'
 				className='flex flex-col items-center justify-center gap-1 fixed top-4 right-4 hover:bg-card-bg p-2 rounded-md z-50'
@@ -93,7 +104,10 @@ function AddGame() {
 
 			<h2 className='text-xl font-bold mb-4'>Agregar datos de juego</h2>
 
-			<form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+			<form
+				onSubmit={handleSubmit}
+				className='flex flex-col gap-4'
+			>
 				<input
 					type='text'
 					placeholder='Título del juego'
@@ -180,7 +194,6 @@ function AddGame() {
 				</button>
 			</form>
 
-			{/* Notificación flotante */}
 			{status && (
 				<div
 					className={clsx(

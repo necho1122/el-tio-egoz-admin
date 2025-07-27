@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { getAuth } from 'firebase/auth';
 
 type Item = {
 	id: string;
@@ -50,12 +51,30 @@ export default function ItemsList() {
 	}, []);
 
 	const deleteItem = async (id: string) => {
+		const auth = getAuth();
+		const user = auth.currentUser;
+
+		if (!user) {
+			alert('No estás autenticado');
+			return;
+		}
+
+		const token = await user.getIdToken();
+
 		const res = await fetch('/api/game/delete', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
 			body: JSON.stringify({ id }),
 		});
-		setData((prev) => prev.filter((game) => game.id !== id));
+
+		if (res.ok) {
+			setData((prev) => prev.filter((game) => game.id !== id));
+		} else {
+			alert('No se pudo eliminar el juego');
+		}
 	};
 
 	const openEditModal = (item: Item) => {
@@ -100,9 +119,22 @@ export default function ItemsList() {
 				.filter((x) => x),
 		};
 
+		const auth = getAuth();
+		const user = auth.currentUser;
+
+		if (!user) {
+			alert('No estás autenticado');
+			return;
+		}
+
+		const token = await user.getIdToken();
+
 		const res = await fetch('/api/game/update', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
 			body: JSON.stringify({
 				id: currentGame.id,
 				data: updatedData,
@@ -117,6 +149,8 @@ export default function ItemsList() {
 			);
 			setEditModalOpen(false);
 			setCurrentGame(null);
+		} else {
+			alert('No se pudo actualizar el juego');
 		}
 	};
 
