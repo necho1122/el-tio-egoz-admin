@@ -116,12 +116,12 @@ function AddGame() {
 					className='border p-2 rounded'
 					required
 				/>
-				<input
-					type='text'
+				<textarea
 					placeholder='Descripción'
 					value={description}
 					onChange={(e) => setDescription(e.target.value)}
 					className='border p-2 rounded'
+					rows={7}
 					required
 				/>
 				<textarea
