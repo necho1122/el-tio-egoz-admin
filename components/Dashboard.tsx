@@ -51,29 +51,41 @@ export default function ItemsList() {
 	}, []);
 
 	const deleteItem = async (id: string) => {
-		const auth = getAuth();
-		const user = auth.currentUser;
+		const confirmed = window.confirm(
+			'¿Estás seguro de que deseas eliminar este juego?'
+		);
 
-		if (!user) {
-			alert('No estás autenticado');
-			return;
-		}
+		if (!confirmed) return;
 
-		const token = await user.getIdToken();
+		try {
+			const auth = getAuth();
+			const user = auth.currentUser;
 
-		const res = await fetch('/api/game/delete', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-			body: JSON.stringify({ id }),
-		});
+			if (!user) {
+				alert('No estás autenticado');
+				return;
+			}
 
-		if (res.ok) {
-			setData((prev) => prev.filter((game) => game.id !== id));
-		} else {
-			alert('No se pudo eliminar el juego');
+			const token = await user.getIdToken();
+
+			const res = await fetch('/api/game/delete', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({ id }),
+			});
+
+			if (res.ok) {
+				setData((prev) => prev.filter((game) => game.id !== id));
+				alert('Juego eliminado correctamente');
+			} else {
+				alert('No se pudo eliminar el juego');
+			}
+		} catch (error) {
+			console.error('Error al eliminar:', error);
+			alert('Ocurrió un error al intentar eliminar el juego');
 		}
 	};
 
