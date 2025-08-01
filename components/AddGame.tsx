@@ -10,10 +10,13 @@ function AddGame() {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
 	const [images, setImages] = useState<string[]>([]);
-	const [basicInfomation, setBasicInfomation] = useState<string[]>([]);
+	const [basicInformation, setbasicInformation] = useState<string[]>([]);
 	const [details, setDetails] = useState<string[]>([]);
 	const [platforms, setPlatforms] = useState<string[]>([]);
-	const [downloadLink, setDownloadLink] = useState<string[]>([]);
+	const [linkAndroid, setLinkAndroid] = useState<string>('');
+	const [linkWindows, setLinkWindows] = useState<string>('');
+	const [linkMac, setLinkMac] = useState<string>('');
+	const [linkIos, setLinkIos] = useState<string>('');
 	const [status, setStatus] = useState('');
 	const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
 
@@ -46,10 +49,12 @@ function AddGame() {
 				title,
 				description,
 				images,
-				basicInfomation,
+				basicInformation,
 				details,
 				platforms,
-				downloadLink,
+				linkAndroid,
+				linkWindows,
+				linkMac,
 				date: new Date().toISOString(),
 				likes: 0,
 			};
@@ -71,10 +76,13 @@ function AddGame() {
 				setTitle('');
 				setDescription('');
 				setImages([]);
-				setBasicInfomation([]);
+				setbasicInformation([]);
 				setDetails([]);
 				setPlatforms([]);
-				setDownloadLink([]);
+				setLinkAndroid('');
+				setLinkWindows('');
+				setLinkMac('');
+				setLinkIos('');
 			} else {
 				const errorText = await response.text();
 				setStatus(`Error al agregar el juego: ${errorText}`);
@@ -144,7 +152,7 @@ function AddGame() {
 							.split('\n')
 							.map((line) => line.trim())
 							.filter((line) => line.length > 0);
-						setBasicInfomation(info);
+						setbasicInformation(info);
 					}}
 					className='border p-2 rounded'
 					rows={3}
@@ -173,18 +181,34 @@ function AddGame() {
 					className='border p-2 rounded'
 					rows={3}
 				></textarea>
-				<textarea
-					placeholder='Enlace de descarga (uno por línea)'
-					onChange={(e) => {
-						const link = e.target.value
-							.split('\n')
-							.map((line) => line.trim())
-							.filter((line) => line.length > 0);
-						setDownloadLink(link);
-					}}
+				<input
+					type='text'
+					placeholder='Enlace Android'
+					value={linkAndroid}
+					onChange={(e) => setLinkAndroid(e.target.value)}
 					className='border p-2 rounded'
-					rows={3}
-				></textarea>
+				/>
+				<input
+					type='text'
+					placeholder='Enlace Windows'
+					value={linkWindows}
+					onChange={(e) => setLinkWindows(e.target.value)}
+					className='border p-2 rounded'
+				/>
+				<input
+					type='text'
+					placeholder='Enlace Mac'
+					value={linkMac}
+					onChange={(e) => setLinkMac(e.target.value)}
+					className='border p-2 rounded'
+				/>
+				<input
+					type='text'
+					placeholder='Enlace iOS'
+					value={linkIos}
+					onChange={(e) => setLinkIos(e.target.value)}
+					className='border p-2 rounded'
+				/>
 
 				<button
 					type='submit'

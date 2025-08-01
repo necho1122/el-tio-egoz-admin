@@ -19,7 +19,11 @@ type Item = {
 	basicInfomation?: string[];
 	details?: string[];
 	platforms?: string[];
-	downloadLink?: string[];
+	linkAndroid?: string;
+	linkWindows?: string;
+	linkMac?: string;
+	linkIos?: string;
+	createdBy?: string;
 };
 
 export default function ItemsList() {
@@ -33,7 +37,10 @@ export default function ItemsList() {
 	const [basicInfomation, setBasicInfomation] = useState<string>('');
 	const [details, setDetails] = useState<string>('');
 	const [platforms, setPlatforms] = useState<string>('');
-	const [downloadLink, setDownloadLink] = useState<string>('');
+	const [linkAndroid, setLinkAndroid] = useState<string>('');
+	const [linkWindows, setLinkWindows] = useState<string>('');
+	const [linkMac, setLinkMac] = useState<string>('');
+	const [linkIos, setLinkIos] = useState<string>('');
 
 	useEffect(() => {
 		async function fetchItems() {
@@ -97,7 +104,10 @@ export default function ItemsList() {
 		setBasicInfomation(item.basicInfomation?.join('\n') || '');
 		setDetails(item.details?.join('\n') || '');
 		setPlatforms(item.platforms?.join('\n') || '');
-		setDownloadLink(item.downloadLink?.join('\n') || '');
+		setLinkAndroid(item.linkAndroid || '');
+		setLinkWindows(item.linkWindows || '');
+		setLinkMac(item.linkMac || '');
+		setLinkIos(item.linkIos || '');
 		setEditModalOpen(true);
 	};
 
@@ -125,10 +135,11 @@ export default function ItemsList() {
 				.split('\n')
 				.map((x) => x.trim())
 				.filter((x) => x),
-			downloadLink: downloadLink
-				.split('\n')
-				.map((x) => x.trim())
-				.filter((x) => x),
+			linkAndroid: linkAndroid.trim(),
+			linkWindows: linkWindows.trim(),
+			linkMac: linkMac.trim(),
+			linkIos: linkIos.trim(),
+			createdBy: currentGame.createdBy, // Mantener el creador original
 		};
 
 		const auth = getAuth();
@@ -294,13 +305,33 @@ export default function ItemsList() {
 								rows={3}
 								required
 							/>
-							<textarea
-								placeholder='Enlaces de descarga (una por línea)'
-								value={downloadLink}
-								onChange={(e) => setDownloadLink(e.target.value)}
+							<input
+								type='text'
+								placeholder='Enlace Android'
+								value={linkAndroid}
+								onChange={(e) => setLinkAndroid(e.target.value)}
 								className='border p-2 rounded'
-								rows={3}
-								required
+							/>
+							<input
+								type='text'
+								placeholder='Enlace Windows'
+								value={linkWindows}
+								onChange={(e) => setLinkWindows(e.target.value)}
+								className='border p-2 rounded'
+							/>
+							<input
+								type='text'
+								placeholder='Enlace Mac'
+								value={linkMac}
+								onChange={(e) => setLinkMac(e.target.value)}
+								className='border p-2 rounded'
+							/>
+							<input
+								type='text'
+								placeholder='Enlace iOS'
+								value={linkIos}
+								onChange={(e) => setLinkIos(e.target.value)}
+								className='border p-2 rounded'
 							/>
 							<button
 								type='submit'
