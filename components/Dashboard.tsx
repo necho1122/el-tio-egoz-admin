@@ -16,7 +16,7 @@ type Item = {
 	images: string[];
 	createdAt: number;
 	likes: number;
-	basicInfomation?: string[];
+	basicInformation?: string[];
 	details?: string[];
 	platforms?: string[];
 	linkAndroid?: string;
@@ -34,7 +34,7 @@ export default function ItemsList() {
 	const [formTitle, setFormTitle] = useState('');
 	const [formDescription, setFormDescription] = useState('');
 	const [formImages, setFormImages] = useState<string>('');
-	const [basicInfomation, setBasicInfomation] = useState<string>('');
+	const [basicInformation, setbasicInformation] = useState<string>('');
 	const [details, setDetails] = useState<string>('');
 	const [platforms, setPlatforms] = useState<string>('');
 	const [linkAndroid, setLinkAndroid] = useState<string>('');
@@ -101,7 +101,7 @@ export default function ItemsList() {
 		setFormTitle(item.title);
 		setFormDescription(item.description);
 		setFormImages(item.images?.join('\n') || '');
-		setBasicInfomation(item.basicInfomation?.join('\n') || '');
+		setbasicInformation(item.basicInformation?.join('\n') || '');
 		setDetails(item.details?.join('\n') || '');
 		setPlatforms(item.platforms?.join('\n') || '');
 		setLinkAndroid(item.linkAndroid || '');
@@ -123,7 +123,7 @@ export default function ItemsList() {
 				.split('\n')
 				.map((url) => url.trim())
 				.filter((url) => url.length > 0),
-			basicInfomation: basicInfomation
+			basicInformation: basicInformation
 				.split('\n')
 				.map((x) => x.trim())
 				.filter((x) => x),
@@ -283,8 +283,8 @@ export default function ItemsList() {
 							/>
 							<textarea
 								placeholder='Información básica del juego (una por línea)'
-								value={basicInfomation}
-								onChange={(e) => setBasicInfomation(e.target.value)}
+								value={basicInformation}
+								onChange={(e) => setbasicInformation(e.target.value)}
 								className='border p-2 rounded'
 								rows={3}
 								required

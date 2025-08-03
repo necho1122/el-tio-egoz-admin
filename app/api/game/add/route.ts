@@ -1,5 +1,6 @@
 // app/api/game/add/route.ts
 import { auth, db } from '@/lib/firebaseAdmin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -14,12 +15,11 @@ export async function POST(req: Request) {
 
 		const body = await req.json();
 
-		// Tipado parcial en tiempo de ejecución
 		if (
 			typeof body.title !== 'string' ||
 			typeof body.description !== 'string' ||
 			!Array.isArray(body.images) ||
-			!Array.isArray(body.basicInformation) || // corregido
+			!Array.isArray(body.basicInformation) ||
 			!Array.isArray(body.details) ||
 			!Array.isArray(body.platforms)
 		) {
@@ -30,14 +30,14 @@ export async function POST(req: Request) {
 			title: body.title,
 			description: body.description,
 			images: body.images,
-			basicInformation: body.basicInformation, // corregido
+			basicInformation: body.basicInformation,
 			details: body.details,
 			platforms: body.platforms,
 			linkAndroid: body.linkAndroid || '',
 			linkWindows: body.linkWindows || '',
 			linkMac: body.linkMac || '',
 			linkIos: body.linkIos || '',
-			createdAt: Date.now(), // más fácil de manejar
+			createdAt: FieldValue.serverTimestamp(),
 			likes: 0,
 			createdBy: decoded.uid,
 		};
