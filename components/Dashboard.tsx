@@ -220,7 +220,7 @@ export default function ItemsList() {
 				<GamesCounter />
 				<button
 					onClick={() => signOut(auth)}
-					className='flex items-center gap-2 bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-md mb-4 flex-nowrap text-nowrap'
+					className='flex items-center gap-2 bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-md flex-nowrap text-nowrap'
 				>
 					<Image
 						src='/icons/exit.png'
