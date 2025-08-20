@@ -30,7 +30,7 @@ export default function RootLayout({
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<ProtectedRoute>
-					<div className='flex mx-auto max-w-7xl items-center justify-center gap-4 py-8'>
+					<div className='flex mx-auto max-w-7xl items-center justify-center gap-4 pt-4'>
 						<Image
 							src='/logo.webp'
 							alt='El tío Egoz - Admin'
