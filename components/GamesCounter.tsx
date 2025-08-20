@@ -15,7 +15,7 @@ function GamesCounter() {
 
 	return (
 		<div>
-			<p className='text-lg'>
+			<p>
 				Total Games: <span className='font-semibold'>{gamesCount.length}</span>
 			</p>
 		</div>

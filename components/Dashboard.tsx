@@ -188,9 +188,21 @@ export default function ItemsList() {
 
 	return (
 		<div className='max-w-7xl mx-auto px-4 py-8'>
-			<div className='w-full flex justify-center items-center mb-6 gap-4'>
+			<div className='w-full flex justify-between items-center mb-6 gap-4'>
+				<div className='flex max-w-7xl items-center justify-center gap-4 pt-4'>
+					<Image
+						src='/logo.webp'
+						alt='El tío Egoz - Admin'
+						width={60}
+						height={60}
+						className='rounded-full'
+					/>
+					<h1 className='text-heading text-2xl font-bold'>
+						El tío Egoz - Admin
+					</h1>
+				</div>
 				{/* Barra de búsqueda */}
-				<div className='w-full max-w-md'>
+				<div className='w-full max-w-md md:max-w-sm'>
 					<input
 						type='text'
 						placeholder='🔍 Buscar juegos por título...'
@@ -206,11 +218,9 @@ export default function ItemsList() {
 					/>
 				</div>
 				<GamesCounter />
-			</div>
-			<div className='grid sm:grid-cols-2 md:grid-cols-3 gap-8'>
 				<button
 					onClick={() => signOut(auth)}
-					className='absolute top-4 right-4 flex items-center gap-2 bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-md mb-4'
+					className='flex items-center gap-2 bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-md mb-4 flex-nowrap text-nowrap'
 				>
 					<Image
 						src='/icons/exit.png'
@@ -220,6 +230,8 @@ export default function ItemsList() {
 					/>
 					Cerrar sesión
 				</button>
+			</div>
+			<div className='grid sm:grid-cols-2 md:grid-cols-3 gap-8'>
 				<Link
 					href='/addGame'
 					className='flex flex-col items-center justify-center fixed bottom-4 right-4 hover:bg-card-bg p-2 rounded-md z-50'

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import Image from 'next/image';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 const geistSans = Geist({
@@ -29,21 +28,7 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<ProtectedRoute>
-					<div className='flex mx-auto max-w-7xl items-center justify-center gap-4 pt-4'>
-						<Image
-							src='/logo.webp'
-							alt='El tío Egoz - Admin'
-							width={60}
-							height={60}
-							className='rounded-full'
-						/>
-						<h1 className='text-heading text-4xl font-bold'>
-							El tío Egoz - Admin
-						</h1>
-					</div>
-					{children}
-				</ProtectedRoute>
+				<ProtectedRoute>{children}</ProtectedRoute>
 			</body>
 		</html>
 	);
